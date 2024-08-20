@@ -5,7 +5,7 @@ __pycache__/
 .chainlit/
 .venv/
 .cache/
-.DS_store/
+.DS_Store
 
 # Ignore environment variables file
 .env
