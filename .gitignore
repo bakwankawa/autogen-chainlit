@@ -4,6 +4,8 @@ __pycache__/
 # Ignore Chainlit cache and virtual environment
 .chainlit/
 .venv/
+.cache/
+.DS_store/
 
 # Ignore environment variables file
 .env
