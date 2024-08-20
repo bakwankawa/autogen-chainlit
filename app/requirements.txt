@@ -1,0 +1,7 @@
+azure-cosmos==4.7.0
+chainlit==1.0.200
+pandas==2.2.2
+pyautogen==0.2.32
+python-dotenv==1.0.1
+PyYAML==6.0.2
+redis==5.0.8

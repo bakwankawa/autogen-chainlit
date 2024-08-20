@@ -1,0 +1,9 @@
+# Ignore compiled bytecode files
+__pycache__/
+
+# Ignore Chainlit cache and virtual environment
+.chainlit/
+.venv/
+
+# Ignore environment variables file
+.env
