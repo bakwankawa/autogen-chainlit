@@ -110,9 +110,9 @@ async def run_conversation(message: cl.Message):
         disallowed_transition = {
             manager: [admin],
             admin: [researcher_external, researcher_internal, analyst],
-            researcher_external: [manager, spokesman, admin],
+            researcher_external: [spokesman, admin],
             researcher_internal: [manager, spokesman, admin],
-            analyst: [manager, admin]
+            analyst: [admin]
         }
 
         group_chat = cl.user_session.get("group_chat")
@@ -134,11 +134,12 @@ async def run_conversation(message: cl.Message):
         )
 
         if len(group_chat.messages) == 0:
-            # Preload conversation history
-            conversation_history = await load_conversation_history(SELECTED_VALUE, 3)
-            # print(f"[DEBUG] Preloaded conversation history: {conversation_history}")
-            history_content = " ".join([msg.get('content', '') for msg in conversation_history])
-            message_content = f"Previous chat history:{history_content} \n\nCurrent question: {CONTEXT}"
+            # # Preload conversation history
+            # conversation_history = await load_conversation_history(SELECTED_VALUE, 3)
+            # # print(f"[DEBUG] Preloaded conversation history: {conversation_history}")
+            # history_content = " ".join([msg.get('content', '') for msg in conversation_history])
+            # message_content = f"Previous chat history:{history_content} \n\nCurrent question: {CONTEXT}"
+            message_content = f"{CONTEXT}"
             
             await cl.make_async(admin.initiate_chat)(chat_manager, message=message_content)
 

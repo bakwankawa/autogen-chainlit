@@ -9,3 +9,6 @@ __pycache__/
 
 # Ignore environment variables file
 .env
+
+endpoint-test.py
+app/test.py

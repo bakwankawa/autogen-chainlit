@@ -1,5 +1,8 @@
 import aiohttp
 import json
+import certifi
+import ssl
+from datetime import datetime
 from typing_extensions import Annotated
 from config import cosmos_client, SERPER_API_KEY, apify_client, SELECTED_VALUE
 
@@ -22,6 +25,16 @@ async def get_nama_rm(selected_value) -> str:
             return item.get('nama_rm', "Unknown")
     return "Unknown"
 
+# Function to get today's date in string format
+async def get_today_date() -> Annotated[str, "Return today's date as a string in the format YYYY-MM-DD"]:
+    """
+    Get today's date.
+
+    Returns:
+    str: The current date in 'YYYY-MM-DD' format.
+    """
+    return datetime.today().strftime('%Y-%m-%d')
+
 # Function for google search
 async def google_search(
     search_keyword: Annotated[str, "the keyword to search information by google api"]) -> Annotated[dict, "the json response from the google search api"]:
@@ -37,7 +50,11 @@ async def google_search(
     url = "https://google.serper.dev/search"
 
     payload = json.dumps({
-        "q": search_keyword
+        "q": search_keyword,
+        "gl": "id",
+        "hl": "id",
+        "tbs": "qdr:y",
+        "num": 20
     })
 
     headers = {
@@ -45,11 +62,20 @@ async def google_search(
         'Content-Type': 'application/json'
     }
 
+    # Create an SSL context using certifi's certificate bundle
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
+
     async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, data=payload) as response:
+        async with session.post(url, headers=headers, data=payload, ssl=ssl_context) as response:
             response_text = await response.text()
-            print("RESPONSE:", response_text)
-            return response_text
+            response_json = json.loads(response_text)
+            
+            # Extracting only the 'answerBox' and 'organic' fields
+            filtered_response = {
+                "answerBox": response_json.get("answerBox"),
+                "organic": response_json.get("organic")
+            }
+            return filtered_response
 
 # Function for google search for spokesman
 async def google_search_for_spokesman(
@@ -66,7 +92,8 @@ async def google_search_for_spokesman(
     url = "https://google.serper.dev/search"
 
     payload = json.dumps({
-        "q": search_keyword
+        "q": search_keyword,
+        "num": 20
     })
 
     headers = {
@@ -74,8 +101,11 @@ async def google_search_for_spokesman(
         'Content-Type': 'application/json'
     }
 
+    # Create an SSL context using certifi's certificate bundle
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
+
     async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, data=payload) as response:
+        async with session.post(url, headers=headers, data=payload, ssl=ssl_context) as response:
             response_text = await response.text()
             print("RESPONSE:", response_text)
             return response_text
@@ -103,8 +133,11 @@ async def google_maps_search(
         'Content-Type': 'application/json'
     }
 
+    # Create an SSL context using certifi's certificate bundle
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
+
     async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, data=payload) as response:
+        async with session.post(url, headers=headers, data=payload, ssl=ssl_context) as response:
             response_text = await response.text()
             print("RESPONSE:", response_text)
             return response_text

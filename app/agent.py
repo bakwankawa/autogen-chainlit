@@ -1,11 +1,12 @@
 import asyncio
 from app.agent_wrapper import ChainlitAssistantAgent, ChainlitUserProxyAgent
 from config import admin_system_message, manager_system_message, spokesman_system_message, researcher_internal_system_message, researcher_external_system_message, analyst_system_message, gpt4_config, SELECTED_VALUE
-from app.utils import get_nama_rm, google_search, google_maps_search, scrape_page, gather_internal_kpi_data, gather_internal_pipeline_data
+from app.utils import get_nama_rm, google_search, google_maps_search, scrape_page, gather_internal_kpi_data, gather_internal_pipeline_data, get_today_date
 from autogen import register_function
 
 # Run the async function synchronously to get the RM name
 admin_system_message = admin_system_message.replace("{rm_name}", asyncio.run(get_nama_rm(SELECTED_VALUE)))
+researcher_external_system_message = researcher_external_system_message.replace("{date}", asyncio.run(get_today_date()))
 
 admin = ChainlitUserProxyAgent(
     name="Admin",
@@ -47,7 +48,7 @@ analyst = ChainlitAssistantAgent(
 
 executor = ChainlitUserProxyAgent(
     name="Executor",
-    system_message="Executor. Execute the web browsing google map, web scrapping, and get relevant data from internal database",
+    system_message="Executor. Execute the web browsing google map, web scrapping, get current date, and get relevant data from internal database",
     human_input_mode="NEVER"
 )
 
@@ -90,3 +91,11 @@ register_function(
     name="gather_internal_kpi_data",
     description="Useful tool for getting internal KPI targets to provide recommendations."
 )
+
+# register_function(
+#     get_today_date,
+#     caller=researcher_external,
+#     executor=executor,
+#     name="get_today_date",
+#     description="Useful tool for getting current date"
+# )
