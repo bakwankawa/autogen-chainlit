@@ -1,5 +1,7 @@
 import aiohttp
 import json
+import certifi
+import ssl
 from typing_extensions import Annotated
 from config import cosmos_client, SERPER_API_KEY, apify_client, SELECTED_VALUE
 
@@ -45,8 +47,11 @@ async def google_search(
         'Content-Type': 'application/json'
     }
 
+    # Create an SSL context using certifi's certificate bundle
+    ssl_context = ssl.create_default_context(cafile=certifi.where())
+
     async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, data=payload) as response:
+        async with session.post(url, headers=headers, data=payload, ssl=ssl_context) as response:
             response_text = await response.text()
             print("RESPONSE:", response_text)
             return response_text
