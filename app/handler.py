@@ -68,28 +68,30 @@ async def on_chat_start():
         cl.user_session.set("analyst", analyst)
         cl.user_session.set("executor", executor)
         
-        # Check if history is already loaded
-        if not cl.user_session.get("history_loaded"):
-            # Load the last 5 conversation histories
-            conversation_history = await load_conversation_history(SELECTED_VALUE, 3)
+        # # Check if history is already loaded
+        # if not cl.user_session.get("history_loaded"):
+        #     # Load the last 5 conversation histories
+        #     conversation_history = await load_conversation_history(SELECTED_VALUE, 3)
             
-            if conversation_history:
-                for message in conversation_history:
-                    # print(f"[DEBUG] Processing message: {message}")
-                    # Determine the author based on the message's name
-                    if message.get('name') == 'Admin':
-                        author = 'You'
-                    elif message.get('name') == 'Spokesman':
-                        author = 'Assistant'
-                    else:
-                        author = message.get('name', 'Unknown')  # Default to 'Unknown' if neither Admin nor Spokesman
+        #     if conversation_history:
+        #         for message in conversation_history:
+        #             # print(f"[DEBUG] Processing message: {message}")
+        #             # Determine the author based on the message's name
+        #             if message.get('name') == 'Admin':
+        #                 author = 'You'
+        #             elif message.get('name') == 'Spokesman':
+        #                 author = 'Assistant'
+        #             else:
+        #                 author = message.get('name', 'Unknown')  # Default to 'Unknown' if neither Admin nor Spokesman
                     
-                    # print(f"[DEBUG] Sending message with content: {message.get('content')} and author: {author}")
-                    await cl.Message(content=message.get('content', ''), author=author).send()
-                cl.user_session.set("history_loaded", True)
-            else:
-                msg = cl.Message(content=f"Hello! What task would you like to get done today?", author="Admin")
-                await msg.send()
+        #             # print(f"[DEBUG] Sending message with content: {message.get('content')} and author: {author}")
+        #             await cl.Message(content=message.get('content', ''), author=author).send()
+        #         cl.user_session.set("history_loaded", True)
+        #     else:
+        #         msg = cl.Message(content=f"Hello! What task would you like to get done today?", author="Admin")
+        #         await msg.send()
+        msg = cl.Message(content=f"Hello! What task would you like to get done today?", author="Admin")
+        await msg.send()
     except Exception as e:
         print("Error: ", e)
 
@@ -134,11 +136,12 @@ async def run_conversation(message: cl.Message):
         )
 
         if len(group_chat.messages) == 0:
-            # Preload conversation history
-            conversation_history = await load_conversation_history(SELECTED_VALUE, 3)
-            # print(f"[DEBUG] Preloaded conversation history: {conversation_history}")
-            history_content = " ".join([msg.get('content', '') for msg in conversation_history])
-            message_content = f"Previous chat history:{history_content} \n\nCurrent question: {CONTEXT}"
+            # # Preload conversation history
+            # conversation_history = await load_conversation_history(SELECTED_VALUE, 3)
+            # # print(f"[DEBUG] Preloaded conversation history: {conversation_history}")
+            # history_content = " ".join([msg.get('content', '') for msg in conversation_history])
+            # message_content = f"Previous chat history:{history_content} \n\nCurrent question: {CONTEXT}"
+            message_content = CONTEXT
             
             await cl.make_async(admin.initiate_chat)(chat_manager, message=message_content)
 
